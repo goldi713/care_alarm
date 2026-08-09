@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareAlarm</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>❤️ CareAlarm</h1>
+        <p>Smart Care & Reminder</p>
+    </header>
+
+    <main>
+
+        <section class="welcome">
+            <h2>Hello! 👋</h2>
+            <p>How can we help you today?</p>
+        </section>
+
+        <section class="cards">
+
+            <div class="card">
+                <span>⏰</span>
+                <h3>Alarm</h3>
+                <p>Set your daily alarm</p>
+                <button>Set Alarm</button>
+            </div>
+
+            <div class="card">
+                <span>💊</span>
+                <h3>Medicine</h3>
+                <p>Never miss your medicine</p>
+                <button>Set Reminder</button>
+            </div>
+
+            <div class="card emergency">
+                <span>🚨</span>
+                <h3>Emergency</h3>
+                <p>Get help quickly</p>
+                <button>Emergency Alert</button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 CareAlarm</p>
+    </footer>
+
+</body>
+</html>
