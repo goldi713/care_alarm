@@ -4,137 +4,536 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>CareAlarm</title>
-
+    <title>CareAlarm - Smart Care & Reminder</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- HEADER -->
-    <header>
-        <h1>❤️ CareAlarm</h1>
-        <p>Smart Care & Reminder</p>
-    </header>
+<header class="top-header">
+
+    <div class="brand">
+
+        <div class="brand-icon">❤️</div>
+
+        <div>
+            <h1>CareAlarm</h1>
+            <p>Smart Care & Reminder</p>
+        </div>
+
+    </div>
+
+</header>
 
 
-    <!-- MAIN -->
-    <main>
+<main class="container">
 
-        <!-- WELCOME -->
-        <section class="welcome">
-            <h2>Hello! 👋</h2>
-            <p>How can we help you today?</p>
-        </section>
+    <!-- CLOCK -->
 
+    <section class="clock-card">
 
-        <!-- CARDS -->
-        <section class="cards">
+        <div id="currentDay">
+            Loading...
+        </div>
 
+        <div id="currentTime">
+            00:00:00
+        </div>
 
-            <!-- ================= ALARM ================= -->
+        <div id="currentDate">
+            Loading...
+        </div>
 
-            <div class="card">
-
-                <span class="icon">⏰</span>
-
-                <h3>Alarm</h3>
-
-                <p>Set your daily alarms</p>
-
-                <button onclick="showAlarmBox()">
-                    + Add Alarm
-                </button>
+    </section>
 
 
-                <!-- ADD ALARM BOX -->
+    <!-- EMERGENCY -->
 
-                <div id="alarmBox" class="popup-box">
+    <section class="card emergency-card">
 
-                    <h3>⏰ Add Alarm</h3>
+        <h2>🆘 Emergency Alert</h2>
 
-                    <label for="alarmTime">
-                        Select Time:
-                    </label>
+        <label for="emergencyContact">
+            Select Emergency Contact
+        </label>
 
-                    <input type="time" id="alarmTime">
+        <select id="emergencyContact">
+
+            <option value="">
+                -- Select Contact --
+            </option>
+
+        </select>
 
 
-                    <label for="alarmName">
-                        Alarm Name:
-                    </label>
+        <div class="emergency-buttons">
+
+            <button
+                id="callEmergencyBtn"
+                class="danger-btn">
+
+                📞 Call Emergency Contact
+
+            </button>
+
+
+            <button
+                id="whatsappEmergencyBtn"
+                class="whatsapp-btn">
+
+                💬 Send WhatsApp Alert
+
+            </button>
+
+        </div>
+
+
+        <p
+            id="emergencyStatus"
+            class="status">
+        </p>
+
+    </section>
+
+
+    <!-- CONTACTS -->
+
+    <section class="card">
+
+        <h2>👨‍👩‍👧 Family Contacts</h2>
+
+
+        <div class="form-grid">
+
+            <div>
+
+                <label for="contactName">
+                    Contact Name
+                </label>
+
+                <input
+                    type="text"
+                    id="contactName"
+                    placeholder="e.g. Mother">
+
+            </div>
+
+
+            <div>
+
+                <label for="contactPhone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="contactPhone"
+                    placeholder="e.g. 9876543210">
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="saveContactBtn"
+            class="primary-btn">
+
+            💾 Save Contact
+
+        </button>
+
+
+        <p
+            id="contactStatus"
+            class="status">
+        </p>
+
+
+        <div
+            id="contactsList"
+            class="contacts-list">
+        </div>
+
+    </section>
+
+
+    <!-- ADD REMINDER -->
+
+    <section class="card">
+
+        <h2>⏰ Add Reminder</h2>
+
+
+        <div class="form-grid">
+
+            <div>
+
+                <label for="reminderType">
+                    Reminder Type
+                </label>
+
+                <select id="reminderType">
+
+                    <option value="water">
+                        💧 Water
+                    </option>
+
+                    <option value="walk">
+                        🚶 Walk
+                    </option>
+
+                    <option value="sleep">
+                        🌙 Sleep
+                    </option>
+
+                    <option value="medicine">
+                        💊 Medicine
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label for="reminderTitle">
+                    Reminder Name
+                </label>
+
+                <input
+                    type="text"
+                    id="reminderTitle"
+                    placeholder="e.g. Drink Water">
+
+            </div>
+
+
+            <div
+                id="medicineNameBox"
+                class="hidden">
+
+                <label for="medicineName">
+                    Medicine Name
+                </label>
+
+                <input
+                    type="text"
+                    id="medicineName"
+                    placeholder="e.g. Vitamin Tablet">
+
+            </div>
+
+
+            <div>
+
+                <label for="reminderTime">
+                    Time
+                </label>
+
+                <input
+                    type="time"
+                    id="reminderTime">
+
+            </div>
+
+        </div>
+
+
+        <!-- DAYS -->
+
+        <div class="days-section">
+
+            <label>
+                Select Days
+            </label>
+
+
+            <div class="day-options">
+
+                <label class="day-option">
 
                     <input
-                        type="text"
-                        id="alarmName"
-                        placeholder="e.g. Morning"
-                    >
+                        type="checkbox"
+                        value="0"
+                        class="day-checkbox">
+
+                    <span>
+                        Sunday
+                    </span>
+
+                </label>
 
 
-                    <button onclick="saveAlarm()">
-                        Save Alarm
-                    </button>
+                <label class="day-option">
 
-                </div>
+                    <input
+                        type="checkbox"
+                        value="1"
+                        class="day-checkbox">
+
+                    <span>
+                        Monday
+                    </span>
+
+                </label>
 
 
-                <!-- ALARM LIST -->
+                <label class="day-option">
 
-                <div id="alarmList"></div>
+                    <input
+                        type="checkbox"
+                        value="2"
+                        class="day-checkbox">
+
+                    <span>
+                        Tuesday
+                    </span>
+
+                </label>
+
+
+                <label class="day-option">
+
+                    <input
+                        type="checkbox"
+                        value="3"
+                        class="day-checkbox">
+
+                    <span>
+                        Wednesday
+                    </span>
+
+                </label>
+
+
+                <label class="day-option">
+
+                    <input
+                        type="checkbox"
+                        value="4"
+                        class="day-checkbox">
+
+                    <span>
+                        Thursday
+                    </span>
+
+                </label>
+
+
+                <label class="day-option">
+
+                    <input
+                        type="checkbox"
+                        value="5"
+                        class="day-checkbox">
+
+                    <span>
+                        Friday
+                    </span>
+
+                </label>
+
+
+                <label class="day-option">
+
+                    <input
+                        type="checkbox"
+                        value="6"
+                        class="day-checkbox">
+
+                    <span>
+                        Saturday
+                    </span>
+
+                </label>
 
             </div>
 
 
-            <!-- ================= MEDICINE ================= -->
+            <button
+                type="button"
+                id="dailyBtn"
+                class="secondary-btn">
 
-            <div class="card">
+                📅 Select Daily
 
-                <span class="icon">💊</span>
-
-                <h3>Medicine</h3>
-
-                <p>Never miss your medicine</p>
-
-                <button onclick="setMedicineReminder()">
-                    Set Reminder
-                </button>
-
-            </div>
+            </button>
 
 
-            <!-- ================= EMERGENCY ================= -->
+            <button
+                type="button"
+                id="clearDaysBtn"
+                class="small-btn">
 
-            <div class="card emergency">
+                Clear Days
 
-                <span class="icon">🚨</span>
-
-                <h3>Emergency</h3>
-
-                <p>Get help quickly</p>
-
-                <button onclick="emergencyAlert()">
-                    Emergency Alert
-                </button>
-
-            </div>
+            </button>
 
 
-        </section>
+            <p
+                id="daysStatus"
+                class="status">
+            </p>
 
-    </main>
-
-
-    <!-- FOOTER -->
-
-    <footer>
-        <p>© 2026 CareAlarm</p>
-    </footer>
+        </div>
 
 
-    <!-- JAVASCRIPT -->
+        <button
+            id="saveReminderBtn"
+            class="primary-btn">
 
-    <script src="script.js"></script>
+            ➕ Save Reminder
+
+        </button>
+
+
+        <button
+            id="cancelEditBtn"
+            class="secondary-btn hidden">
+
+            Cancel Edit
+
+        </button>
+
+
+        <p
+            id="reminderStatus"
+            class="status">
+        </p>
+
+    </section>
+
+
+    <!-- TODAY'S REMINDERS -->
+
+    <section class="card">
+
+        <div class="section-title-row">
+
+            <h2>
+                📋 Today's Reminders
+            </h2>
+
+
+            <button
+                id="testNotificationBtn"
+                class="small-btn">
+
+                🔔 Test Alert
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="todayReminders"
+            class="reminders-list">
+        </div>
+
+    </section>
+
+
+    <!-- ALL REMINDERS -->
+
+    <section class="card">
+
+        <h2>
+            🗓️ All Saved Reminders
+        </h2>
+
+
+        <div
+            id="allReminders"
+            class="reminders-list">
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ALARM POPUP -->
+
+<div
+    id="alarmOverlay"
+    class="alarm-overlay hidden">
+
+    <div class="alarm-box">
+
+        <div class="alarm-icon">
+            🔔
+        </div>
+
+
+        <h2 id="alarmTitle">
+            Reminder
+        </h2>
+
+
+        <p id="alarmMessage">
+            It is time for your reminder.
+        </p>
+
+
+        <div class="alarm-buttons">
+
+
+            <button
+                id="alarmEditBtn"
+                class="primary-btn">
+
+                ✏️ Edit
+
+            </button>
+
+
+            <button
+                id="alarmCallBtn"
+                class="danger-btn">
+
+                📞 Call
+
+            </button>
+
+
+            <button
+                id="alarmWhatsappBtn"
+                class="whatsapp-btn">
+
+                💬 WhatsApp
+
+            </button>
+
+
+            <button
+                id="alarmStopBtn"
+                class="danger-btn">
+
+                ⛔ Stop
+
+            </button>
+
+
+            <button
+                id="alarmSnoozeBtn"
+                class="secondary-btn">
+
+                😴 Snooze 5 Minutes
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
 
 </body>
 
