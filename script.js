@@ -2,7 +2,8 @@
 
 /* =========================================================
    CAREALARM - COMPLETE SCRIPT
-   Soft Sound + Voice + Popup + Edit + Call + WhatsApp
+   Only button functionality fixed:
+   Edit / Call / WhatsApp / Delete
    ========================================================= */
 
 
@@ -10,43 +11,21 @@
    STORAGE
    ========================================================= */
 
-const CONTACTS_KEY =
-    "careAlarmContacts";
-
-const REMINDERS_KEY =
-    "careAlarmReminders";
-
+const CONTACTS_KEY = "careAlarmContacts";
+const REMINDERS_KEY = "careAlarmReminders";
 
 let contacts =
-    JSON.parse(
-        localStorage.getItem(
-            CONTACTS_KEY
-        )
-    ) || [];
-
+    JSON.parse(localStorage.getItem(CONTACTS_KEY)) || [];
 
 let reminders =
-    JSON.parse(
-        localStorage.getItem(
-            REMINDERS_KEY
-        )
-    ) || [];
+    JSON.parse(localStorage.getItem(REMINDERS_KEY)) || [];
 
+let editingReminderId = null;
+let currentAlarmReminder = null;
 
-let editingReminderId =
-    null;
-
-let currentAlarmReminder =
-    null;
-
-let alarmTimeout =
-    null;
-
-let alarmSoundInterval =
-    null;
-
-let audioContext =
-    null;
+let alarmTimeout = null;
+let alarmSoundInterval = null;
+let audioContext = null;
 
 
 /* =========================================================
@@ -63,17 +42,11 @@ const dayNames = [
     "Saturday"
 ];
 
-
 const typeIcons = {
-
     water: "💧",
-
     walk: "🚶",
-
     sleep: "🌙",
-
     medicine: "💊"
-
 };
 
 
@@ -82,194 +55,124 @@ const typeIcons = {
    ========================================================= */
 
 const currentDay =
-    document.getElementById(
-        "currentDay"
-    );
+    document.getElementById("currentDay");
 
 const currentTime =
-    document.getElementById(
-        "currentTime"
-    );
+    document.getElementById("currentTime");
 
 const currentDate =
-    document.getElementById(
-        "currentDate"
-    );
+    document.getElementById("currentDate");
 
 
 /* Emergency */
 
 const emergencyContact =
-    document.getElementById(
-        "emergencyContact"
-    );
+    document.getElementById("emergencyContact");
 
 const callEmergencyBtn =
-    document.getElementById(
-        "callEmergencyBtn"
-    );
+    document.getElementById("callEmergencyBtn");
 
 const whatsappEmergencyBtn =
-    document.getElementById(
-        "whatsappEmergencyBtn"
-    );
+    document.getElementById("whatsappEmergencyBtn");
 
 const emergencyStatus =
-    document.getElementById(
-        "emergencyStatus"
-    );
+    document.getElementById("emergencyStatus");
 
 
 /* Contacts */
 
 const contactName =
-    document.getElementById(
-        "contactName"
-    );
+    document.getElementById("contactName");
 
 const contactPhone =
-    document.getElementById(
-        "contactPhone"
-    );
+    document.getElementById("contactPhone");
 
 const saveContactBtn =
-    document.getElementById(
-        "saveContactBtn"
-    );
+    document.getElementById("saveContactBtn");
 
 const contactStatus =
-    document.getElementById(
-        "contactStatus"
-    );
+    document.getElementById("contactStatus");
 
 const contactsList =
-    document.getElementById(
-        "contactsList"
-    );
+    document.getElementById("contactsList");
 
 
 /* Reminder */
 
 const reminderType =
-    document.getElementById(
-        "reminderType"
-    );
+    document.getElementById("reminderType");
 
 const reminderTitle =
-    document.getElementById(
-        "reminderTitle"
-    );
+    document.getElementById("reminderTitle");
 
 const medicineNameBox =
-    document.getElementById(
-        "medicineNameBox"
-    );
+    document.getElementById("medicineNameBox");
 
 const medicineName =
-    document.getElementById(
-        "medicineName"
-    );
+    document.getElementById("medicineName");
 
 const reminderTime =
-    document.getElementById(
-        "reminderTime"
-    );
+    document.getElementById("reminderTime");
 
 const dayCheckboxes =
-    document.querySelectorAll(
-        ".day-checkbox"
-    );
+    document.querySelectorAll(".day-checkbox");
 
 const dailyBtn =
-    document.getElementById(
-        "dailyBtn"
-    );
+    document.getElementById("dailyBtn");
 
 const clearDaysBtn =
-    document.getElementById(
-        "clearDaysBtn"
-    );
+    document.getElementById("clearDaysBtn");
 
 const daysStatus =
-    document.getElementById(
-        "daysStatus"
-    );
+    document.getElementById("daysStatus");
 
 const saveReminderBtn =
-    document.getElementById(
-        "saveReminderBtn"
-    );
+    document.getElementById("saveReminderBtn");
 
 const cancelEditBtn =
-    document.getElementById(
-        "cancelEditBtn"
-    );
+    document.getElementById("cancelEditBtn");
 
 const reminderStatus =
-    document.getElementById(
-        "reminderStatus"
-    );
+    document.getElementById("reminderStatus");
 
 
 /* Lists */
 
 const todayReminders =
-    document.getElementById(
-        "todayReminders"
-    );
+    document.getElementById("todayReminders");
 
 const allReminders =
-    document.getElementById(
-        "allReminders"
-    );
+    document.getElementById("allReminders");
 
 
 /* Alarm popup */
 
 const alarmOverlay =
-    document.getElementById(
-        "alarmOverlay"
-    );
+    document.getElementById("alarmOverlay");
 
 const alarmTitle =
-    document.getElementById(
-        "alarmTitle"
-    );
+    document.getElementById("alarmTitle");
 
 const alarmMessage =
-    document.getElementById(
-        "alarmMessage"
-    );
+    document.getElementById("alarmMessage");
 
 const alarmEditBtn =
-    document.getElementById(
-        "alarmEditBtn"
-    );
+    document.getElementById("alarmEditBtn");
 
 const alarmCallBtn =
-    document.getElementById(
-        "alarmCallBtn"
-    );
+    document.getElementById("alarmCallBtn");
 
 const alarmWhatsappBtn =
-    document.getElementById(
-        "alarmWhatsappBtn"
-    );
+    document.getElementById("alarmWhatsappBtn");
 
 const alarmStopBtn =
-    document.getElementById(
-        "alarmStopBtn"
-    );
+    document.getElementById("alarmStopBtn");
 
 const alarmSnoozeBtn =
-    document.getElementById(
-        "alarmSnoozeBtn"
-    );
+    document.getElementById("alarmSnoozeBtn");
 
 const testNotificationBtn =
-    document.getElementById(
-        "testNotificationBtn"
-    );
+    document.getElementById("testNotificationBtn");
 
 
 /* =========================================================
@@ -277,7 +180,6 @@ const testNotificationBtn =
    ========================================================= */
 
 function saveContacts() {
-
     localStorage.setItem(
         CONTACTS_KEY,
         JSON.stringify(contacts)
@@ -286,7 +188,6 @@ function saveContacts() {
 
 
 function saveReminders() {
-
     localStorage.setItem(
         REMINDERS_KEY,
         JSON.stringify(reminders)
@@ -295,12 +196,9 @@ function saveReminders() {
 
 
 function createId() {
-
     return (
         Date.now().toString() +
-        Math.random()
-            .toString(16)
-            .slice(2)
+        Math.random().toString(16).slice(2)
     );
 }
 
@@ -312,15 +210,17 @@ function createId() {
 function normalizePhone(phone) {
 
     let cleaned =
-        String(phone)
-            .replace(/\D/g, "");
+        String(phone).replace(/\D/g, "");
+
+    /*
+     * If number is already 91XXXXXXXXXX,
+     * keep it unchanged.
+     */
 
     if (
         cleaned.length === 10
     ) {
-
-        cleaned =
-            "91" + cleaned;
+        cleaned = "91" + cleaned;
     }
 
     return cleaned;
@@ -328,81 +228,41 @@ function normalizePhone(phone) {
 
 
 /* =========================================================
-   DAYS
+   STATUS
    ========================================================= */
 
-function getSelectedDays() {
+function showStatus(element, message) {
 
-    return Array.from(
-        dayCheckboxes
-    )
-        .filter(
-            checkbox =>
-                checkbox.checked
-        )
-        .map(
-            checkbox =>
-                Number(
-                    checkbox.value
-                )
-        );
-}
+    if (!element) {
+        return;
+    }
 
+    element.textContent = message;
 
-function setSelectedDays(days) {
+    setTimeout(() => {
 
-    dayCheckboxes.forEach(
-        checkbox => {
-
-            checkbox.checked =
-                days.includes(
-                    Number(
-                        checkbox.value
-                    )
-                );
+        if (
+            element.textContent === message
+        ) {
+            element.textContent = "";
         }
-    );
 
-    updateDaysStatus();
+    }, 4000);
 }
 
 
-function updateDaysStatus() {
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
 
-    const days =
-        getSelectedDays();
+function escapeHtml(value) {
 
-
-    if (
-        days.length === 0
-    ) {
-
-        daysStatus.textContent =
-            "Please select at least one day.";
-
-        return;
-    }
-
-
-    if (
-        days.length === 7
-    ) {
-
-        daysStatus.textContent =
-            "📅 Daily selected.";
-
-        return;
-    }
-
-
-    daysStatus.textContent =
-        "Selected: " +
-        days
-            .map(
-                day =>
-                    dayNames[day]
-            )
-            .join(", ");
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
@@ -412,15 +272,10 @@ function updateDaysStatus() {
 
 function updateClock() {
 
-    const now =
-        new Date();
-
+    const now = new Date();
 
     currentDay.textContent =
-        dayNames[
-            now.getDay()
-        ];
-
+        dayNames[now.getDay()];
 
     currentTime.textContent =
         now.toLocaleTimeString(
@@ -432,7 +287,6 @@ function updateClock() {
                 hour12: true
             }
         );
-
 
     currentDate.textContent =
         now.toLocaleDateString(
@@ -448,7 +302,6 @@ function updateClock() {
 
 updateClock();
 
-
 setInterval(
     updateClock,
     1000
@@ -456,33 +309,147 @@ setInterval(
 
 
 /* =========================================================
+   DAYS
+   ========================================================= */
+
+function getSelectedDays() {
+
+    return Array.from(dayCheckboxes)
+        .filter(
+            checkbox =>
+                checkbox.checked
+        )
+        .map(
+            checkbox =>
+                Number(checkbox.value)
+        );
+}
+
+
+function setSelectedDays(days) {
+
+    dayCheckboxes.forEach(
+        checkbox => {
+
+            checkbox.checked =
+                days.includes(
+                    Number(checkbox.value)
+                );
+        }
+    );
+
+    updateDaysStatus();
+}
+
+
+function updateDaysStatus() {
+
+    const days =
+        getSelectedDays();
+
+    if (days.length === 0) {
+
+        daysStatus.textContent =
+            "Please select at least one day.";
+
+        return;
+    }
+
+    if (days.length === 7) {
+
+        daysStatus.textContent =
+            "📅 Daily selected.";
+
+        return;
+    }
+
+    daysStatus.textContent =
+        "Selected: " +
+        days
+            .map(day => dayNames[day])
+            .join(", ");
+}
+
+
+dayCheckboxes.forEach(
+    checkbox => {
+
+        checkbox.addEventListener(
+            "change",
+            updateDaysStatus
+        );
+    }
+);
+
+
+dailyBtn.addEventListener(
+    "click",
+    () => {
+
+        dayCheckboxes.forEach(
+            checkbox => {
+                checkbox.checked = true;
+            }
+        );
+
+        updateDaysStatus();
+    }
+);
+
+
+clearDaysBtn.addEventListener(
+    "click",
+    () => {
+
+        dayCheckboxes.forEach(
+            checkbox => {
+                checkbox.checked = false;
+            }
+        );
+
+        updateDaysStatus();
+    }
+);
+
+
+updateDaysStatus();
+
+
+/* =========================================================
    CONTACTS
+   ========================================================= */
+
+function getContact(id) {
+
+    return contacts.find(
+        contact =>
+            String(contact.id) === String(id)
+    );
+}
+
+
+/* =========================================================
+   RENDER CONTACTS
    ========================================================= */
 
 function renderContacts() {
 
-    contactsList.innerHTML =
-        "";
+    contactsList.innerHTML = "";
 
-
-    emergencyContact.innerHTML =
-        `
+    emergencyContact.innerHTML = `
         <option value="">
             -- Select Contact --
         </option>
-        `;
+    `;
 
 
-    if (
-        contacts.length === 0
-    ) {
+    if (contacts.length === 0) {
 
-        contactsList.innerHTML =
-            `
+        contactsList.innerHTML = `
             <div class="empty-message">
                 No family contacts saved yet.
             </div>
-            `;
+        `;
 
         return;
     }
@@ -491,30 +458,30 @@ function renderContacts() {
     contacts.forEach(
         contact => {
 
-            const option =
-                document.createElement(
-                    "option"
-                );
+            /*
+             * Emergency dropdown
+             */
 
+            const option =
+                document.createElement("option");
 
             option.value =
                 contact.id;
 
-
             option.textContent =
                 `${contact.name} - ${contact.phone}`;
-
 
             emergencyContact.appendChild(
                 option
             );
 
 
-            const item =
-                document.createElement(
-                    "div"
-                );
+            /*
+             * Contact card
+             */
 
+            const item =
+                document.createElement("div");
 
             item.className =
                 "contact-item";
@@ -550,8 +517,8 @@ function renderContacts() {
                 <div class="contact-actions">
 
                     <button
-                        class="call-btn"
-                        onclick="callContact('${contact.id}')">
+                        type="button"
+                        class="call-btn contact-call-btn">
 
                         📞 Call
 
@@ -559,8 +526,8 @@ function renderContacts() {
 
 
                     <button
-                        class="wa-btn"
-                        onclick="whatsappContact('${contact.id}')">
+                        type="button"
+                        class="wa-btn contact-whatsapp-btn">
 
                         💬 WhatsApp
 
@@ -568,8 +535,8 @@ function renderContacts() {
 
 
                     <button
-                        class="delete-btn"
-                        onclick="deleteContact('${contact.id}')">
+                        type="button"
+                        class="delete-btn contact-delete-btn">
 
                         🗑️ Delete
 
@@ -577,6 +544,61 @@ function renderContacts() {
 
                 </div>
             `;
+
+
+            /*
+             * IMPORTANT:
+             * Attach buttons directly.
+             * No inline onclick.
+             */
+
+            const callBtn =
+                item.querySelector(
+                    ".contact-call-btn"
+                );
+
+            const whatsappBtn =
+                item.querySelector(
+                    ".contact-whatsapp-btn"
+                );
+
+            const deleteBtn =
+                item.querySelector(
+                    ".contact-delete-btn"
+                );
+
+
+            callBtn.addEventListener(
+                "click",
+                () => {
+
+                    callContact(
+                        contact.id
+                    );
+                }
+            );
+
+
+            whatsappBtn.addEventListener(
+                "click",
+                () => {
+
+                    whatsappContact(
+                        contact.id
+                    );
+                }
+            );
+
+
+            deleteBtn.addEventListener(
+                "click",
+                () => {
+
+                    deleteContact(
+                        contact.id
+                    );
+                }
+            );
 
 
             contactsList.appendChild(
@@ -587,7 +609,9 @@ function renderContacts() {
 }
 
 
-/* Save contact */
+/* =========================================================
+   SAVE CONTACT
+   ========================================================= */
 
 saveContactBtn.addEventListener(
     "click",
@@ -623,9 +647,7 @@ saveContactBtn.addEventListener(
 
 
         const normalized =
-            normalizePhone(
-                phone
-            );
+            normalizePhone(phone);
 
 
         if (
@@ -657,11 +679,9 @@ saveContactBtn.addEventListener(
         renderContacts();
 
 
-        contactName.value =
-            "";
+        contactName.value = "";
 
-        contactPhone.value =
-            "";
+        contactPhone.value = "";
 
 
         showStatus(
@@ -672,92 +692,131 @@ saveContactBtn.addEventListener(
 );
 
 
-/* Find contact */
-
-function getContact(id) {
-
-    return contacts.find(
-        contact =>
-            contact.id === id
-    );
-}
-
-
-/* Call contact */
+/* =========================================================
+   CONTACT CALL
+   ========================================================= */
 
 function callContact(id) {
 
     const contact =
         getContact(id);
 
-
     if (!contact) {
+
+        alert(
+            "Contact not found."
+        );
+
         return;
     }
 
 
-    window.location.href =
-        "tel:+" +
+    const phone =
         normalizePhone(
             contact.phone
         );
+
+
+    if (!phone) {
+
+        alert(
+            "Invalid phone number."
+        );
+
+        return;
+    }
+
+
+    /*
+     * Mobile/desktop phone handler
+     */
+
+    window.location.href =
+        "tel:+" + phone;
 }
 
 
-/* WhatsApp contact */
+/* =========================================================
+   CONTACT WHATSAPP
+   ========================================================= */
 
 function whatsappContact(id) {
 
     const contact =
         getContact(id);
 
-
     if (!contact) {
+
+        alert(
+            "Contact not found."
+        );
+
+        return;
+    }
+
+
+    const phone =
+        normalizePhone(
+            contact.phone
+        );
+
+
+    if (!phone) {
+
+        alert(
+            "Invalid phone number."
+        );
+
         return;
     }
 
 
     const message =
-        `Hello ${contact.name}, ` +
-        `this is a message from CareAlarm.`;
+        `Hello ${contact.name}, this is a message from CareAlarm.`;
 
 
     openWhatsApp(
-        normalizePhone(
-            contact.phone
-        ),
+        phone,
         message
     );
 }
 
 
-/* Delete contact */
+/* =========================================================
+   CONTACT DELETE
+   ========================================================= */
 
 function deleteContact(id) {
 
     const contact =
         getContact(id);
 
-
     if (!contact) {
+
+        alert(
+            "Contact not found."
+        );
+
         return;
     }
 
 
-    if (
-        !confirm(
+    const confirmDelete =
+        confirm(
             `Delete ${contact.name} from family contacts?`
-        )
-    ) {
+        );
 
+
+    if (!confirmDelete) {
         return;
     }
 
 
     contacts =
         contacts.filter(
-            contact =>
-                contact.id !== id
+            item =>
+                String(item.id) !==
+                String(id)
         );
 
 
@@ -768,13 +827,39 @@ function deleteContact(id) {
 
     showStatus(
         contactStatus,
-        "Contact deleted."
+        "✅ Contact deleted."
     );
 }
 
 
 /* =========================================================
-   EMERGENCY
+   WHATSAPP OPEN
+   ========================================================= */
+
+function openWhatsApp(
+    phone,
+    message
+) {
+
+    const url =
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(message);
+
+
+    /*
+     * Use location instead of popup
+     * so browser popup blocking does
+     * not stop WhatsApp.
+     */
+
+    window.location.href = url;
+}
+
+
+/* =========================================================
+   EMERGENCY CALL
    ========================================================= */
 
 callEmergencyBtn.addEventListener(
@@ -811,14 +896,16 @@ callEmergencyBtn.addEventListener(
         );
 
 
-        window.location.href =
-            "tel:+" +
-            normalizePhone(
-                contact.phone
-            );
+        callContact(
+            contact.id
+        );
     }
 );
 
+
+/* =========================================================
+   EMERGENCY WHATSAPP
+   ========================================================= */
 
 whatsappEmergencyBtn.addEventListener(
     "click",
@@ -870,31 +957,6 @@ whatsappEmergencyBtn.addEventListener(
 
 
 /* =========================================================
-   WHATSAPP
-   ========================================================= */
-
-function openWhatsApp(
-    phone,
-    message
-) {
-
-    const url =
-        "https://wa.me/" +
-        phone +
-        "?text=" +
-        encodeURIComponent(
-            message
-        );
-
-
-    window.open(
-        url,
-        "_blank"
-    );
-}
-
-
-/* =========================================================
    REMINDER TYPE
    ========================================================= */
 
@@ -928,68 +990,6 @@ reminderType.addEventListener(
         }
     }
 );
-
-
-/* =========================================================
-   DAILY
-   ========================================================= */
-
-dailyBtn.addEventListener(
-    "click",
-    () => {
-
-        dayCheckboxes.forEach(
-            checkbox => {
-
-                checkbox.checked =
-                    true;
-            }
-        );
-
-
-        updateDaysStatus();
-    }
-);
-
-
-/* =========================================================
-   CLEAR DAYS
-   ========================================================= */
-
-clearDaysBtn.addEventListener(
-    "click",
-    () => {
-
-        dayCheckboxes.forEach(
-            checkbox => {
-
-                checkbox.checked =
-                    false;
-            }
-        );
-
-
-        updateDaysStatus();
-    }
-);
-
-
-/* =========================================================
-   DAY CHANGE
-   ========================================================= */
-
-dayCheckboxes.forEach(
-    checkbox => {
-
-        checkbox.addEventListener(
-            "change",
-            updateDaysStatus
-        );
-    }
-);
-
-
-updateDaysStatus();
 
 
 /* =========================================================
@@ -1035,9 +1035,7 @@ saveReminderBtn.addEventListener(
         }
 
 
-        if (
-            days.length === 0
-        ) {
+        if (days.length === 0) {
 
             showStatus(
                 reminderStatus,
@@ -1048,8 +1046,7 @@ saveReminderBtn.addEventListener(
         }
 
 
-        let medicine =
-            "";
+        let medicine = "";
 
 
         if (
@@ -1072,17 +1069,17 @@ saveReminderBtn.addEventListener(
         }
 
 
-        /* EDIT */
+        /*
+         * UPDATE EXISTING
+         */
 
-        if (
-            editingReminderId
-        ) {
+        if (editingReminderId) {
 
             const reminder =
                 reminders.find(
-                    reminder =>
-                        reminder.id ===
-                        editingReminderId
+                    item =>
+                        String(item.id) ===
+                        String(editingReminderId)
                 );
 
 
@@ -1113,12 +1110,12 @@ saveReminderBtn.addEventListener(
                 "✅ Reminder updated."
             );
 
-        }
 
+        } else {
 
-        /* NEW */
-
-        else {
+            /*
+             * NEW REMINDER
+             */
 
             reminders.push({
 
@@ -1165,18 +1162,24 @@ function editReminder(id) {
 
     const reminder =
         reminders.find(
-            reminder =>
-                reminder.id === id
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
     if (!reminder) {
+
+        alert(
+            "Reminder not found."
+        );
+
         return;
     }
 
 
     editingReminderId =
-        id;
+        reminder.id;
 
 
     reminderType.value =
@@ -1213,7 +1216,7 @@ function editReminder(id) {
 
 
     setSelectedDays(
-        reminder.days
+        reminder.days || []
     );
 
 
@@ -1224,6 +1227,14 @@ function editReminder(id) {
     cancelEditBtn.classList.remove(
         "hidden"
     );
+
+
+    document
+        .getElementById("reminderType")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
 }
 
 
@@ -1237,7 +1248,6 @@ cancelEditBtn.addEventListener(
 
         resetReminderForm();
 
-
         showStatus(
             reminderStatus,
             "Edit cancelled."
@@ -1247,7 +1257,7 @@ cancelEditBtn.addEventListener(
 
 
 /* =========================================================
-   RESET FORM
+   RESET REMINDER FORM
    ========================================================= */
 
 function resetReminderForm() {
@@ -1300,15 +1310,16 @@ function resetReminderForm() {
 
 
 /* =========================================================
-   START / STOP REMINDER
+   TOGGLE REMINDER
    ========================================================= */
 
 function toggleReminder(id) {
 
     const reminder =
         reminders.find(
-            reminder =>
-                reminder.id === id
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -1335,8 +1346,9 @@ function deleteReminder(id) {
 
     const reminder =
         reminders.find(
-            reminder =>
-                reminder.id === id
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -1357,8 +1369,9 @@ function deleteReminder(id) {
 
     reminders =
         reminders.filter(
-            reminder =>
-                reminder.id !== id
+            item =>
+                String(item.id) !==
+                String(id)
         );
 
 
@@ -1369,7 +1382,7 @@ function deleteReminder(id) {
 
 
 /* =========================================================
-   RENDER
+   RENDER REMINDERS
    ========================================================= */
 
 function renderReminders() {
@@ -1381,7 +1394,7 @@ function renderReminders() {
 
 
 /* =========================================================
-   TODAY
+   TODAY REMINDERS
    ========================================================= */
 
 function renderTodayReminders() {
@@ -1410,16 +1423,13 @@ function renderTodayReminders() {
             );
 
 
-    if (
-        list.length === 0
-    ) {
+    if (list.length === 0) {
 
-        todayReminders.innerHTML =
-            `
+        todayReminders.innerHTML = `
             <div class="empty-message">
                 No reminders for today.
             </div>
-            `;
+        `;
 
         return;
     }
@@ -1439,7 +1449,7 @@ function renderTodayReminders() {
 
 
 /* =========================================================
-   ALL
+   ALL REMINDERS
    ========================================================= */
 
 function renderAllReminders() {
@@ -1448,16 +1458,13 @@ function renderAllReminders() {
         "";
 
 
-    if (
-        reminders.length === 0
-    ) {
+    if (reminders.length === 0) {
 
-        allReminders.innerHTML =
-            `
+        allReminders.innerHTML = `
             <div class="empty-message">
                 No reminders saved yet.
             </div>
-            `;
+        `;
 
         return;
     }
@@ -1486,7 +1493,7 @@ function renderAllReminders() {
 
 
 /* =========================================================
-   REMINDER CARD
+   CREATE REMINDER ELEMENT
    ========================================================= */
 
 function createReminderElement(
@@ -1494,9 +1501,7 @@ function createReminderElement(
 ) {
 
     const item =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     item.className =
@@ -1520,8 +1525,7 @@ function createReminderElement(
                 .join(", ");
 
 
-    let medicineText =
-        "";
+    let medicineText = "";
 
 
     if (
@@ -1530,15 +1534,14 @@ function createReminderElement(
         reminder.medicine
     ) {
 
-        medicineText =
-            `
+        medicineText = `
             <div>
                 💊 Medicine:
                 ${escapeHtml(
                     reminder.medicine
                 )}
             </div>
-            `;
+        `;
     }
 
 
@@ -1553,6 +1556,11 @@ function createReminderElement(
             ? "⏹️ Stop"
             : "▶️ Start";
 
+
+    /*
+     * IMPORTANT:
+     * No inline onclick here.
+     */
 
     item.innerHTML = `
 
@@ -1598,13 +1606,8 @@ function createReminderElement(
         <div class="reminder-info">
 
             <div>
-
-                📅 ${escapeHtml(
-                    daysText
-                )}
-
+                📅 ${escapeHtml(daysText)}
             </div>
-
 
             ${medicineText}
 
@@ -1614,8 +1617,8 @@ function createReminderElement(
         <div class="reminder-actions">
 
             <button
-                class="edit-btn"
-                onclick="editReminder('${reminder.id}')">
+                type="button"
+                class="edit-btn reminder-edit-btn">
 
                 ✏️ Edit
 
@@ -1623,8 +1626,8 @@ function createReminderElement(
 
 
             <button
-                class="stop-btn"
-                onclick="toggleReminder('${reminder.id}')">
+                type="button"
+                class="stop-btn reminder-stop-btn">
 
                 ${toggleText}
 
@@ -1632,16 +1635,78 @@ function createReminderElement(
 
 
             <button
-                class="delete-btn"
-                onclick="deleteReminder('${reminder.id}')">
+                type="button"
+                class="delete-btn reminder-delete-btn">
 
                 🗑️ Delete
 
             </button>
 
         </div>
-
     `;
+
+
+    /*
+     * Attach Edit
+     */
+
+    const editBtn =
+        item.querySelector(
+            ".reminder-edit-btn"
+        );
+
+
+    editBtn.addEventListener(
+        "click",
+        () => {
+
+            editReminder(
+                reminder.id
+            );
+        }
+    );
+
+
+    /*
+     * Attach Stop / Start
+     */
+
+    const stopBtn =
+        item.querySelector(
+            ".reminder-stop-btn"
+        );
+
+
+    stopBtn.addEventListener(
+        "click",
+        () => {
+
+            toggleReminder(
+                reminder.id
+            );
+        }
+    );
+
+
+    /*
+     * Attach Delete
+     */
+
+    const deleteBtn =
+        item.querySelector(
+            ".reminder-delete-btn"
+        );
+
+
+    deleteBtn.addEventListener(
+        "click",
+        () => {
+
+            deleteReminder(
+                reminder.id
+            );
+        }
+    );
 
 
     return item;
@@ -1681,17 +1746,12 @@ function formatTime(time) {
         hour % 12;
 
 
-    if (
-        hour === 0
-    ) {
-
+    if (hour === 0) {
         hour = 12;
     }
 
 
-    return (
-        `${hour}:${minute} ${ampm}`
-    );
+    return `${hour}:${minute} ${ampm}`;
 }
 
 
@@ -1712,19 +1772,13 @@ function checkReminders() {
     const hour =
         String(
             now.getHours()
-        ).padStart(
-            2,
-            "0"
-        );
+        ).padStart(2, "0");
 
 
     const minute =
         String(
             now.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        );
+        ).padStart(2, "0");
 
 
     const currentTime =
@@ -1734,9 +1788,7 @@ function checkReminders() {
     reminders.forEach(
         reminder => {
 
-            if (
-                !reminder.enabled
-            ) {
+            if (!reminder.enabled) {
                 return;
             }
 
@@ -1796,7 +1848,7 @@ setInterval(
 
 
 /* =========================================================
-   SPOKEN MESSAGE
+   VOICE MESSAGE
    ========================================================= */
 
 function getSpokenMessage(
@@ -1809,9 +1861,7 @@ function getSpokenMessage(
 
         case "medicine":
 
-            if (
-                reminder.medicine
-            ) {
+            if (reminder.medicine) {
 
                 return (
                     "CareAlarm reminder. " +
@@ -1820,7 +1870,6 @@ function getSpokenMessage(
                     "."
                 );
             }
-
 
             return (
                 "CareAlarm reminder. " +
@@ -1900,7 +1949,6 @@ function activateAlarm(
 
     startAlarmSound();
 
-
     speakAlarmMessage(
         spokenMessage
     );
@@ -1922,10 +1970,7 @@ function speakAlarmMessage(
 ) {
 
     if (
-        !(
-            "speechSynthesis"
-            in window
-        )
+        !("speechSynthesis" in window)
     ) {
         return;
     }
@@ -1940,20 +1985,13 @@ function speakAlarmMessage(
         );
 
 
-    speech.lang =
-        "en-IN";
+    speech.lang = "en-IN";
 
+    speech.rate = 0.85;
 
-    speech.rate =
-        0.85;
+    speech.pitch = 1;
 
-
-    speech.pitch =
-        1;
-
-
-    speech.volume =
-        1;
+    speech.volume = 1;
 
 
     const voices =
@@ -1964,19 +2002,15 @@ function speakAlarmMessage(
     const preferredVoice =
         voices.find(
             voice =>
-                voice.lang ===
-                "en-IN"
+                voice.lang === "en-IN"
         ) ||
         voices.find(
             voice =>
-                voice.lang.startsWith(
-                    "en"
-                )
+                voice.lang.startsWith("en")
         );
 
 
     if (preferredVoice) {
-
         speech.voice =
             preferredVoice;
     }
@@ -1995,8 +2029,7 @@ function speakAlarmMessage(
 function stopVoice() {
 
     if (
-        "speechSynthesis"
-        in window
+        "speechSynthesis" in window
     ) {
 
         window.speechSynthesis.cancel();
@@ -2052,7 +2085,7 @@ function startAlarmSound() {
 
 
 /* =========================================================
-   SOFT TWO-TONE CHIME
+   SOFT CHIME
    ========================================================= */
 
 function playSoftChime() {
@@ -2067,8 +2100,6 @@ function playSoftChime() {
         const now =
             audioContext.currentTime;
 
-
-        /* First tone */
 
         const oscillator1 =
             audioContext.createOscillator();
@@ -2106,27 +2137,19 @@ function playSoftChime() {
         );
 
 
-        oscillator1.connect(
-            gain1
-        );
-
+        oscillator1.connect(gain1);
 
         gain1.connect(
             audioContext.destination
         );
 
 
-        oscillator1.start(
-            now
-        );
-
+        oscillator1.start(now);
 
         oscillator1.stop(
             now + 0.8
         );
 
-
-        /* Second tone */
 
         const oscillator2 =
             audioContext.createOscillator();
@@ -2170,10 +2193,7 @@ function playSoftChime() {
         );
 
 
-        oscillator2.connect(
-            gain2
-        );
-
+        oscillator2.connect(gain2);
 
         gain2.connect(
             audioContext.destination
@@ -2183,7 +2203,6 @@ function playSoftChime() {
         oscillator2.start(
             now + 0.25
         );
-
 
         oscillator2.stop(
             now + 1.05
@@ -2206,16 +2225,13 @@ function playSoftChime() {
 
 function stopAlarmSound() {
 
-    if (
-        alarmSoundInterval
-    ) {
+    if (alarmSoundInterval) {
 
         clearInterval(
             alarmSoundInterval
         );
 
-        alarmSoundInterval =
-            null;
+        alarmSoundInterval = null;
     }
 
 
@@ -2226,9 +2242,7 @@ function stopAlarmSound() {
                 () => {}
             );
 
-
-        audioContext =
-            null;
+        audioContext = null;
     }
 }
 
@@ -2255,7 +2269,6 @@ function stopAlarm() {
 
     stopAlarmSound();
 
-
     stopVoice();
 
 
@@ -2269,9 +2282,7 @@ function stopAlarm() {
             alarmTimeout
         );
 
-
-        alarmTimeout =
-            null;
+        alarmTimeout = null;
     }
 }
 
@@ -2284,9 +2295,7 @@ alarmSnoozeBtn.addEventListener(
     "click",
     () => {
 
-        if (
-            !currentAlarmReminder
-        ) {
+        if (!currentAlarmReminder) {
             return;
         }
 
@@ -2314,16 +2323,14 @@ alarmSnoozeBtn.addEventListener(
 
 
 /* =========================================================
-   ALARM POPUP EDIT
+   ALARM POPUP - EDIT
    ========================================================= */
 
 alarmEditBtn.addEventListener(
     "click",
     () => {
 
-        if (
-            !currentAlarmReminder
-        ) {
+        if (!currentAlarmReminder) {
             return;
         }
 
@@ -2332,57 +2339,29 @@ alarmEditBtn.addEventListener(
             currentAlarmReminder;
 
 
-        /*
-         * Stop alarm first.
-         */
-
         stopAlarm();
 
-
-        /*
-         * Open exact reminder
-         * in the existing edit form.
-         */
 
         editReminder(
             reminder.id
         );
-
-
-        /*
-         * Scroll to form.
-         */
-
-        const form =
-            document.getElementById(
-                "reminderType"
-            );
-
-
-        if (form) {
-
-            form.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        }
     }
 );
 
 
 /* =========================================================
-   ALARM POPUP CALL
+   ALARM POPUP - CALL
    ========================================================= */
 
 alarmCallBtn.addEventListener(
     "click",
     () => {
 
-        const selectedId =
+        const id =
             emergencyContact.value;
 
 
-        if (!selectedId) {
+        if (!id) {
 
             alert(
                 "Please select an Emergency Contact first."
@@ -2393,9 +2372,7 @@ alarmCallBtn.addEventListener(
 
 
         const contact =
-            getContact(
-                selectedId
-            );
+            getContact(id);
 
 
         if (!contact) {
@@ -2408,28 +2385,26 @@ alarmCallBtn.addEventListener(
         }
 
 
-        window.location.href =
-            "tel:+" +
-            normalizePhone(
-                contact.phone
-            );
+        callContact(
+            contact.id
+        );
     }
 );
 
 
 /* =========================================================
-   ALARM POPUP WHATSAPP
+   ALARM POPUP - WHATSAPP
    ========================================================= */
 
 alarmWhatsappBtn.addEventListener(
     "click",
     () => {
 
-        const selectedId =
+        const id =
             emergencyContact.value;
 
 
-        if (!selectedId) {
+        if (!id) {
 
             alert(
                 "Please select an Emergency Contact first."
@@ -2440,9 +2415,7 @@ alarmWhatsappBtn.addEventListener(
 
 
         const contact =
-            getContact(
-                selectedId
-            );
+            getContact(id);
 
 
         if (!contact) {
@@ -2460,9 +2433,7 @@ alarmWhatsappBtn.addEventListener(
             "A reminder is active.";
 
 
-        if (
-            currentAlarmReminder
-        ) {
+        if (currentAlarmReminder) {
 
             message =
                 "🔔 CareAlarm Reminder\n\n" +
@@ -2517,14 +2488,11 @@ async function requestNotificationPermission() {
 
         try {
 
-            await Notification
-                .requestPermission();
+            await Notification.requestPermission();
 
         } catch (error) {
 
-            console.log(
-                error
-            );
+            console.log(error);
         }
     }
 }
@@ -2553,8 +2521,7 @@ function sendBrowserNotification(
     try {
 
         new Notification(
-            "CareAlarm: " +
-            title,
+            "CareAlarm: " + title,
             {
                 body: message
             }
@@ -2562,9 +2529,7 @@ function sendBrowserNotification(
 
     } catch (error) {
 
-        console.log(
-            error
-        );
+        console.log(error);
     }
 }
 
@@ -2573,9 +2538,7 @@ function sendBrowserNotification(
    TEST ALERT
    ========================================================= */
 
-if (
-    testNotificationBtn
-) {
+if (testNotificationBtn) {
 
     testNotificationBtn.addEventListener(
         "click",
@@ -2586,26 +2549,19 @@ if (
 
             const testReminder = {
 
-                id:
-                    "test-reminder",
+                id: "test-reminder",
 
-                type:
-                    "water",
+                type: "water",
 
-                title:
-                    "Test Reminder",
+                title: "Test Reminder",
 
-                medicine:
-                    "",
+                medicine: "",
 
-                time:
-                    "",
+                time: "",
 
-                days:
-                    [],
+                days: [],
 
-                enabled:
-                    true
+                enabled: true
 
             };
 
@@ -2615,67 +2571,6 @@ if (
             );
         }
     );
-}
-
-
-/* =========================================================
-   STATUS
-   ========================================================= */
-
-function showStatus(
-    element,
-    message
-) {
-
-    element.textContent =
-        message;
-
-
-    setTimeout(
-        () => {
-
-            if (
-                element.textContent ===
-                message
-            ) {
-
-                element.textContent =
-                    "";
-            }
-
-        },
-        4000
-    );
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHtml(value) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
 }
 
 
@@ -2691,25 +2586,21 @@ requestNotificationPermission();
 
 
 console.log(
-    "❤️ CareAlarm loaded."
+    "❤️ CareAlarm loaded successfully."
 );
 
 console.log(
-    "🔔 Soft reminder sound enabled."
+    "✏️ Edit buttons connected."
 );
 
 console.log(
-    "🗣️ Voice speaking enabled."
+    "📞 Call buttons connected."
 );
 
 console.log(
-    "✏️ Alarm Edit enabled."
+    "💬 WhatsApp buttons connected."
 );
 
 console.log(
-    "📞 Alarm Call enabled."
-);
-
-console.log(
-    "💬 Alarm WhatsApp enabled."
+    "🗑️ Delete buttons connected."
 );
